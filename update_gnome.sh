@@ -12,12 +12,12 @@ NC='\033[0m' # No Color
 WORK_DIR="$HOME/Dokumente/gnome_rounded"
 
 # Patch URLs
-GNOME_SHELL_PATCH="https://raw.githubusercontent.com/root9191/BackupLinux/refs/heads/main/gnome_corner/gnome-shell/Shell_BlurEffect__rounded_corners_mask.patch"
+GNOME_SHELL_PATCH="https://raw.githubusercontent.com/root9191/Fix-Gnome-Rounded-Corners/refs/heads/main/gnome-shell/Shell_BlurEffect__rounded_corners_mask.patch"
 # ohne UI 
-#BLUR_MY_SHELL_PATCH="https://raw.githubusercontent.com/root9191/BackupLinux/refs/heads/main/gnome_corner/blurmyshell/Add_corner_radius_to_NativeDynamicBlurEffect.patch"
+#BLUR_MY_SHELL_PATCH="https://raw.githubusercontent.com/root9191/Fix-Gnome-Rounded-Corners/refs/heads/main/blurmyshell/Add_corner_radius_to_NativeDynamicBlurEffect.patch"
 
 # mit UI
-BLUR_MY_SHELL_PATCH="https://raw.githubusercontent.com/root9191/BackupLinux/refs/heads/main/gnome_corner/blurmyshell/Add_corner_radius_to_NativeDynamicBlurEffect_UI.patch"
+BLUR_MY_SHELL_PATCH="https://raw.githubusercontent.com/root9191/Fix-Gnome-Rounded-Corners/refs/heads/main/blurmyshell/Add_corner_radius_to_NativeDynamicBlurEffect_UI.patch"
 
 # Dry-run Modus
 DRY_RUN=false
