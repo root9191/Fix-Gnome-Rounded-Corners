@@ -107,6 +107,39 @@ update_repo() {
     
     echo -e "\n${YELLOW}=== Aktualisiere $repo_name ===${NC}"
     
+    # Spezialbehandlung für gnome-shell: Lade aktuelles Paket herunter
+    if [ "$repo_name" = "gnome-shell" ]; then
+        mkdir -p "$repo_name"
+        cd "$repo_name" || return 1
+        
+        if [ "$DRY_RUN" = true ]; then
+            echo -e "${CYAN}[DRY-RUN] Würde gnome-shell PKGBUILD laden${NC}"
+        else
+            # Bereinige altes Zeug
+            rm -rf *
+            
+            # Lade aktuelles PKGBUILD mit asp (CachyOS Tooling)
+            echo "Lade aktuelles CachyOS gnome-shell PKGBUILD..."
+            if command -v asp &> /dev/null; then
+                asp export extra/gnome-shell 2>/dev/null || {
+                    echo "asp fehlgeschlagen, verwende Arch upstream..."
+                    git clone https://gitlab.archlinux.org/archlinux/packaging/packages/gnome-shell.git .
+                    mv gnome-shell/* . 2>/dev/null
+                    rm -rf gnome-shell
+                }
+            else
+                echo "asp nicht installiert, verwende Arch upstream..."
+                git clone https://gitlab.archlinux.org/archlinux/packaging/packages/gnome-shell.git temp_clone
+                mv temp_clone/* .
+                rm -rf temp_clone
+            fi
+        fi
+        
+        cd "$WORK_DIR" || return 1
+        return 0
+    fi
+    
+    # Normale Git-Repos (blur-my-shell etc.)
     if [ -d "$repo_name" ]; then
         echo "Repository existiert bereits"
         if [ "$DRY_RUN" = true ]; then
@@ -132,6 +165,7 @@ update_repo() {
         fi
     fi
 }
+
 
 # Funktion: PKGBUILD für gnome-shell anpassen
 patch_gnome_shell_pkgbuild() {
