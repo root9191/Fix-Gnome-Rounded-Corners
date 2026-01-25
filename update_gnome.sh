@@ -183,6 +183,41 @@ patch_gnome_shell_pkgbuild() {
     echo -e "${GREEN}✓ gnome-shell PKGBUILD angepasst${NC}"
 }
 
+# Funktion: Sync mit Repository-Version
+sync_with_repo_version() {
+    echo -e "\n${YELLOW}=== Synchronisiere mit Repository-Version ===${NC}"
+    
+    cd "$WORK_DIR/gnome-shell" || exit 1
+    
+    # Hole aktuelle Version aus dem Repo
+    local repo_version=$(pacman -Si gnome-shell | grep "^Version" | awk '{print $3}')
+    
+    if [ "$DRY_RUN" = true ]; then
+        echo -e "${CYAN}[DRY-RUN] Würde Version setzen auf: $repo_version${NC}"
+        return 0
+    fi
+    
+    echo "Repository-Version: $repo_version"
+    
+    # Entferne Epoch (1:) falls vorhanden
+    local version_without_epoch=$(echo $repo_version | sed 's/^[0-9]*://')
+    echo "Version ohne Epoch: $version_without_epoch"
+    
+    # Extrahiere pkgrel (alles nach dem letzten -)
+    local repo_pkgrel=$(echo $version_without_epoch | rev | cut -d'-' -f1 | rev)
+    
+    echo "Aktuelle pkgrel: $repo_pkgrel"
+    
+    # Erhöhe pkgrel um 0.1
+    local new_pkgrel=$(echo "$repo_pkgrel + 0.1" | bc)
+    
+    echo "Neue pkgrel: $new_pkgrel"
+    
+    sed -i "s/^pkgrel=.*/pkgrel=$new_pkgrel/" PKGBUILD
+    
+    echo -e "${GREEN}✓ pkgrel gesetzt auf: $new_pkgrel${NC}"
+}
+
 # Funktion: PKGBUILD für blur-my-shell anpassen
 patch_blur_my_shell_pkgbuild() {
     echo -e "\n${YELLOW}=== Passe blur-my-shell PKGBUILD an ===${NC}"
@@ -349,6 +384,7 @@ main() {
     # 2. PKGBUILDs anpassen
     if [ "$BUILD_GNOME_SHELL" = true ]; then
         patch_gnome_shell_pkgbuild
+        sync_with_repo_version
     fi
 
     if [ "$BUILD_BLUR_MY_SHELL" = true ]; then
